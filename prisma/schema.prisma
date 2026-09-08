@@ -1,0 +1,57 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Album {
+  id          String       @id @default(cuid())
+  title       String
+  artist      String
+  coverUrl    String?
+  createdAt   DateTime     @default(now())
+  songs       Song[]
+  accessCodes AccessCode[]
+}
+
+model Song {
+  id       String @id @default(cuid())
+  title    String
+  duration Int? // seconds
+  r2Key    String // object key in R2, NOT a public URL
+  trackNo  Int?
+  albumId  String
+  album    Album  @relation(fields: [albumId], references: [id], onDelete: Cascade)
+}
+
+model User {
+  id         String      @id @default(cuid())
+  name       String
+  phone      String // collected, unverified — no OTP
+  createdAt  DateTime    @default(now())
+  accessCode AccessCode?
+}
+
+model AccessCode {
+  id           String    @id @default(cuid())
+  code         String    @unique // 6-character, uppercase alphanumeric, exclude ambiguous chars (0/O, 1/I/L)
+  albumId      String
+  album        Album     @relation(fields: [albumId], references: [id], onDelete: Cascade)
+  userId       String?   @unique
+  user         User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
+  sessionToken String?   @unique // set on first activation; null = unbound
+  boundAt      DateTime?
+  createdAt    DateTime  @default(now())
+}
+
+model AdminUser {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  role         String   @default("admin") // "admin" | "support" — support can view/reset bindings but not manage catalog
+  createdAt    DateTime @default(now())
+}
