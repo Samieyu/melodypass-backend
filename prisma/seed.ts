@@ -32,41 +32,61 @@ async function main() {
 
   console.log(`👤 Admin Users created: ${admin.email} (admin), ${support.email} (support)`);
 
-  // 2. Create Sample Album
-  const album = await prisma.album.create({
-    data: {
-      title: 'Neon Echoes',
-      artist: 'Aura V',
-      coverUrl: 'https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?q=80&w=800&auto=format&fit=crop',
-      songs: {
-        create: [
-          {
-            title: 'Midnight Pulse',
-            duration: 215,
-            r2Key: 'sample-song-1.mp3',
-            trackNo: 1,
-          },
-          {
-            title: 'Velvet Horizons',
-            duration: 198,
-            r2Key: 'sample-song-2.mp3',
-            trackNo: 2,
-          },
-          {
-            title: 'Starlight Drift',
-            duration: 240,
-            r2Key: 'sample-song-3.mp3',
-            trackNo: 3,
-          },
-        ],
+  // 2. Remove any previous default songs
+  await prisma.song.deleteMany({
+    where: {
+      title: {
+        in: ['Midnight Pulse', 'Velvet Horizons', 'Starlight Drift'],
       },
-    },
-    include: {
-      songs: true,
     },
   });
 
-  console.log(`🎵 Album created: "${album.title}" by ${album.artist} with ${album.songs.length} songs`);
+  // Find or create Abener Tagesse Album
+  let album = await prisma.album.findFirst({
+    where: {
+      OR: [
+        { artist: 'Abener Tagesse' },
+        { title: 'Neon Echoes' },
+      ],
+    },
+  });
+
+  if (album) {
+    album = await prisma.album.update({
+      where: { id: album.id },
+      data: {
+        title: 'ንጉሥ (King His)',
+        artist: 'Abener Tagesse',
+        coverUrl: '/album-cover.jpg',
+      },
+    });
+  } else {
+    album = await prisma.album.create({
+      data: {
+        title: 'ንጉሥ (King His)',
+        artist: 'Abener Tagesse',
+        coverUrl: '/album-cover.jpg',
+      },
+    });
+  }
+
+  // Delete existing songs for this album to ensure clean state
+  await prisma.song.deleteMany({
+    where: { albumId: album.id },
+  });
+
+  // Create Gospel Music Video track
+  const videoTrack = await prisma.song.create({
+    data: {
+      title: 'ንጉሥ (King His) - Official Music Video',
+      duration: 245,
+      r2Key: 'king-his-video.mp4',
+      trackNo: 1,
+      albumId: album.id,
+    },
+  });
+
+  console.log(`🎵 Video album configured: "${album.title}" by ${album.artist} with track "${videoTrack.title}"`);
 
   // 3. Create Sample Access Codes
   const sampleCodes = ['K8N9P2', 'X4M7R3', 'H9J2W5', 'B3T6V8', 'Z7Y4Q9'];
