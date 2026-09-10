@@ -6,9 +6,8 @@ const prisma = new PrismaClient();
 async function main() {
   console.log('🌱 Starting MelodyPass database seed...');
 
-  // 1. Create Admin Users
+  // 1. Ensure Admin User exists (only if not already created)
   const adminPasswordHash = await bcrypt.hash('AdminPass123!', 10);
-  const supportPasswordHash = await bcrypt.hash('SupportPass123!', 10);
 
   const admin = await prisma.adminUser.upsert({
     where: { email: 'admin@melodypass.com' },
@@ -20,17 +19,12 @@ async function main() {
     },
   });
 
-  const support = await prisma.adminUser.upsert({
+  // Ensure support user is completely deleted if present
+  await prisma.adminUser.deleteMany({
     where: { email: 'support@melodypass.com' },
-    update: {},
-    create: {
-      email: 'support@melodypass.com',
-      passwordHash: supportPasswordHash,
-      role: 'support',
-    },
   });
 
-  console.log(`👤 Admin Users created: ${admin.email} (admin), ${support.email} (support)`);
+  console.log(`👤 Admin User verified: ${admin.email} (support user removed)`);
 
   // 2. Remove any previous default songs
   await prisma.song.deleteMany({

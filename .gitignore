@@ -13,6 +13,7 @@ build/
 .env.local
 .env.production
 change-password.js
+delete-support.js
 
 # Prisma generated client (regenerated on deploy)
 node_modules/.prisma/
