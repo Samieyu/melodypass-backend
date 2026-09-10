@@ -41,8 +41,8 @@ export class StorageService {
    * or returns direct video/audio URLs when Cloudflare R2 is not used.
    */
   async getSignedStreamUrl(r2Key: string, expiresInSeconds: number = 14400): Promise<string> {
-    // 1. If r2Key is already a full URL (e.g. direct video link), return it directly
-    if (r2Key.startsWith('http://') || r2Key.startsWith('https://')) {
+    // 1. If r2Key is already a full URL or relative static path, return it directly
+    if (r2Key.startsWith('http://') || r2Key.startsWith('https://') || r2Key.startsWith('/')) {
       return r2Key;
     }
 
@@ -65,23 +65,23 @@ export class StorageService {
 
     // 3. Fallback direct URLs without requiring Cloudflare R2
     const sampleMediaFiles: Record<string, string> = {
-      'king-his-video.mp4': 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
-      'sample-video.mp4': 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
+      'nkan-zare.mp4': '/videos/nkan-zare.mp4',
+      'king-his-video.mp4': '/videos/nkan-zare.mp4',
+      'video.mp4': '/videos/nkan-zare.mp4',
+      'sample-video.mp4': '/videos/nkan-zare.mp4',
       'sample-song-1.mp3': 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
-      'sample-song-2.mp3': 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3',
-      'sample-song-3.mp3': 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3',
     };
 
     if (sampleMediaFiles[r2Key]) {
       return sampleMediaFiles[r2Key];
     }
 
-    // If key ends with .mp4 / .webm / video, return default video
+    // If key ends with .mp4 / .webm / video, return local video
     if (r2Key.endsWith('.mp4') || r2Key.endsWith('.webm') || r2Key.includes('video')) {
-      return 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4';
+      return '/videos/nkan-zare.mp4';
     }
 
-    const fallbackUrl = `https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3`;
+    const fallbackUrl = `/videos/nkan-zare.mp4`;
     const expiresAt = Math.floor(Date.now() / 1000) + expiresInSeconds;
     return `${fallbackUrl}?expires=${expiresAt}&signature=mock_r2_signed_${encodeURIComponent(r2Key)}`;
   }

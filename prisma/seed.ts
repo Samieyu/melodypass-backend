@@ -80,7 +80,7 @@ async function main() {
     data: {
       title: 'ንካኝ ዛሬ - Official Music Video',
       duration: 245,
-      r2Key: 'king-his-video.mp4',
+      r2Key: '/videos/nkan-zare.mp4',
       trackNo: 1,
       albumId: album.id,
     },
