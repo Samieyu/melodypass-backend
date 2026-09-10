@@ -6,17 +6,12 @@ import * as crypto from 'crypto';
  */
 export function safeCompare(a: string | null | undefined, b: string | null | undefined): boolean {
   if (!a || !b) return false;
-  
+  if (typeof a !== 'string' || typeof b !== 'string') return false;
+
   const hashA = crypto.createHash('sha256').update(a).digest();
-  const hashB = crypto.createHash('sha256').update(a.length === b.length ? b : 'invalid_length_padding').digest();
-  
-  // Create another hash of b for the actual comparison if lengths match
-  const actualHashB = crypto.createHash('sha256').update(b).digest();
+  const hashB = crypto.createHash('sha256').update(b).digest();
 
-  const isLengthEqual = a.length === b.length;
-  const isHashEqual = crypto.timingSafeEqual(hashA, actualHashB);
-
-  return isLengthEqual && isHashEqual;
+  return crypto.timingSafeEqual(hashA, hashB);
 }
 
 /**
