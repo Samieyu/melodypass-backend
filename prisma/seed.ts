@@ -55,7 +55,7 @@ async function main() {
     album = await prisma.album.update({
       where: { id: album.id },
       data: {
-        title: 'ንጉሥ (King His)',
+        title: 'ንካኝ ዛሬ',
         artist: 'Abener Tagesse',
         coverUrl: '/album-cover.jpg',
       },
@@ -63,7 +63,7 @@ async function main() {
   } else {
     album = await prisma.album.create({
       data: {
-        title: 'ንጉሥ (King His)',
+        title: 'ንካኝ ዛሬ',
         artist: 'Abener Tagesse',
         coverUrl: '/album-cover.jpg',
       },
@@ -78,7 +78,7 @@ async function main() {
   // Create Gospel Music Video track
   const videoTrack = await prisma.song.create({
     data: {
-      title: 'ንጉሥ (King His) - Official Music Video',
+      title: 'ንካኝ ዛሬ - Official Music Video',
       duration: 245,
       r2Key: 'king-his-video.mp4',
       trackNo: 1,
