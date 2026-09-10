@@ -28,7 +28,7 @@ export class AccessCodeController {
       res.cookie('session_token', result.sessionToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
         maxAge: 365 * 24 * 60 * 60 * 1000,
         path: '/',
       });

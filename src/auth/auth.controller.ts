@@ -14,11 +14,11 @@ export class AuthController {
   async login(@Body() loginDto: LoginDto, @Res({ passthrough: true }) response: Response) {
     const result = await this.authService.login(loginDto);
     
-    // Set httpOnly cookie for admin_token as well for easy web dashboard authentication
+    // Set httpOnly cookie for admin_token as well for web dashboard authentication
     response.cookie('admin_token', result.accessToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
       maxAge: 24 * 60 * 60 * 1000, // 1 day
     });
 
