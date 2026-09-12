@@ -69,12 +69,12 @@ async function main() {
     where: { albumId: album.id },
   });
 
-  // Create Gospel Music Video track
+  // Create Gospel Music Video track with Cloudflare R2 key
   const videoTrack = await prisma.song.create({
     data: {
       title: 'ንካኝ ዛሬ - Official Music Video',
       duration: 245,
-      r2Key: '/videos/nkan-zare.mp4',
+      r2Key: 'singer-abener/singier-abeni.mp4',
       trackNo: 1,
       albumId: album.id,
     },

@@ -14,6 +14,8 @@ build/
 .env.production
 change-password.js
 delete-support.js
+update-r2key.js
+generate-qr.js
 
 # Prisma generated client (regenerated on deploy)
 node_modules/.prisma/
