@@ -45,6 +45,9 @@ export class AlbumService {
   async findAllAdmin() {
     return this.prisma.album.findMany({
       include: {
+        songs: {
+          orderBy: { trackNo: 'asc' },
+        },
         _count: {
           select: {
             songs: true,
